@@ -1,0 +1,833 @@
+<!doctype html>
+<html>
+  <head>
+        <html lang="en-US">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        
+            Parallel programming in Python | Visualizards
+      
+    </title>
+    <meta name="description" content="
+     A howto on parallel programming in Python
+     ">
+
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/syntax.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=PT+Serif&display=swap">
+
+    <!-- SEO Plugin -->
+    <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Parallel programming in Python | Visualizards</title>
+<meta name="generator" content="Jekyll v4.1.0" />
+<meta property="og:title" content="Parallel programming in Python" />
+<meta name="author" content="visualizards" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A howto on parallel programming in Python" />
+<meta property="og:description" content="A howto on parallel programming in Python" />
+<link rel="canonical" href="http://localhost:4000/2020/06/13/parallel-python.html" />
+<meta property="og:url" content="http://localhost:4000/2020/06/13/parallel-python.html" />
+<meta property="og:site_name" content="Visualizards" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-13T00:00:00+02:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Parallel programming in Python","dateModified":"2020-06-13T00:00:00+02:00","datePublished":"2020-06-13T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/06/13/parallel-python.html"},"url":"http://localhost:4000/2020/06/13/parallel-python.html","author":{"@type":"Person","name":"visualizards"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/logo.jpg"},"name":"visualizards"},"description":"A howto on parallel programming in Python","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Google Analytics -->
+    
+    <!-- End Google Analytics -->
+  </head>
+
+<body>
+
+  <div class="container">
+    <header id="header">
+	<div id = site_title>
+		<a href="http://localhost:4000/">
+			<h1>Visualizards</h1>
+		</a>
+		
+	</div>
+
+	<div id="subheader">
+		
+		<nav class="pages">
+<a href="/about.html">About</a>
+
+<a href="/contact.html">Contact</a>
+
+<a href="/archive.html">Archive</a>
+
+<a href="https://visualizards.redbubble.com">Shop</a>
+</nav>
+		
+		
+		<nav class="social">
+			
+  
+    <a href="https://www.github.com/pandasekh" target="_blank" id="github"><i class="fab fa-github" aria-hidden="true"></i></a>
+  
+   
+
+  
+    <a href="https://twitter.com/PandaSekh" target="_blank" id="twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+  
+   
+
+  
+    <a href="https://www.linkedin.com/in/alessio-franceschi/" target="_blank" id="linkedin"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+  
+   
+
+  
+  
+    <a href="mailto:alessiofranceschi2@gmail.com" target="_blank" id="envelope"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+   
+
+  
+  
+    <a href="/feed.xml" target="_blank" id="rss"><i class="fas fa-rss" aria-hidden="true"></i></a>
+   
+
+		</nav>
+		
+	</div>
+</header>
+
+    <div class="post-container">
+      <article id = "post">
+        <h2 id = "post-title">Parallel programming in Python</h2>
+
+  
+  <div class = "post-info">
+    <span>
+        <i class="far fa-calendar" aria-hidden="true"></i> <span>13 Jun 2020</span> - <i class="far fa-clock"></i> 
+
+
+  
+  
+    29 minute read
+  
+
+    </span>
+  </div>
+  
+        <h1 id="parallel-programming-in-python">Parallel programming in Python</h1>
+<p><em><a href="/assets/notebooks/2020-06-13-parallel-python.ipynb">Download notebook</a></em></p>
+
+<p>It is sometimes stated that parallel code is difficult in Python. However, for most scientific applications, we can achieve the level of parallelism without much effort. In this notebook I will show some simple ways to get parallel code execution in Python.</p>
+
+<ol>
+  <li>With NumPy</li>
+  <li>With Joblib and multiprocessing</li>
+  <li>With Numba</li>
+  <li>With Cython</li>
+</ol>
+
+<p>These methods range in complexity from easiest to most difficult.</p>
+
+<p>After discussing Cython, there is a short example with Numba vectorize, which can be used for functions that should be applied element-wise on numerical NumPy arrays.</p>
+
+<h2 id="parallel-code-with-numpy">Parallel code with NumPy</h2>
+
+<p>By default, NumPy will dispatch the computations to an efficient BLAS (basic linear algebra subproblem) and LAPACK (Linear Algebra PACKage) implementation. BLAS and LAPACK routines are very efficient linear algebra routines that are implemented by groups of people that are experts getting as much speed as humanly possible out of the CPU, and we cannot compete with those for linear algebra computations.</p>
+
+<p>A benefit and downside with NumPy is that it will likely parallelise the code for you without your knowledge. Try to compute the matrix product between two large matrices and look at your CPU load. It will likely use all of your CPU hardware threads (hardware threads are essentially cores).</p>
+
+<h2 id="moving-the-parallelism-to-the-outer-loop">Moving the parallelism to the outer loop</h2>
+
+<p>Often, when we program, we have nested loops. Like below</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">j</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>      </code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+[0, 3, 6, 9, 12, 15, 18, 21, 24, 27]
+[0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
+[0, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+[0, 6, 12, 18, 24, 30, 36, 42, 48, 54]
+[0, 7, 14, 21, 28, 35, 42, 49, 56, 63]
+[0, 8, 16, 24, 32, 40, 48, 56, 64, 72]
+[0, 9, 18, 27, 36, 45, 54, 63, 72, 81]
+</code></pre></div></div>
+
+<p>Here, we have nested loop, and there are two ways to make this parallel, either by doing multiple iterations of the outer loop (<code class="language-plaintext highlighter-rouge">for i in range(10)</code>) at the same time or by doing multiple iterations of the inner loop (<code class="language-plaintext highlighter-rouge">for j in range(10)</code>) at the same time.</p>
+
+<p>Generally, we prefer to have the parallel code on the outer loop, as that is the most work per iteration, which means that there is less likelihood for our cores to stay idle. If there are more hardware threads available than there are iterations on the outer loop, we may split it up and have some of the parallelism on the inner loop as well. However, it is important to make sure that we don’t try to do more things in parallel than we have hardware threads available, as otherwise, much time will be spent switching between tasks rather than actually performing the computations.</p>
+
+<h2 id="disabling-parallel-code-execution-in-numpy-routines">Disabling parallel code execution in NumPy routines</h2>
+<p>Unfortunately, we have a loop where we use a NumPy function, then that function likely runs in parallel using all the available hardware threads. To avoid this from happening, we have to set some envionment variables <em>before</em> importing NumPy. Specifically, we need to set</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span>NUM_THREADS
+<span class="nv">OPENBLAS_NUM_THREADS</span><span class="o">=</span>NUM_THREADS
+<span class="nv">MKL_NUM_THREADS</span><span class="o">=</span>NUM_THREADS
+<span class="nv">VECLIB_MAXIMUM_THREADS</span><span class="o">=</span>NUM_THREADS
+<span class="nv">NUMEXPR_NUM_THREADS</span><span class="o">=</span>NUM_THREADS</code></pre></figure>
+
+<p>The first variable sets the number of OpenMP threads to <code class="language-plaintext highlighter-rouge">NUM_THREADS</code>. OpenMP is used by many software packages that implement parallel code. The next three variables sets the number of threads for NumPy for various different BLAS backends. Finally, the last line sets the number of threads for a useful package called numexpr, which can optimise operations on the form <code class="language-plaintext highlighter-rouge">a*x + b*x - c</code>, which with pure numpy would entail four separate loops, but with numexpr is compiled to a single parallel loop.</p>
+
+<p>We can either set these variables directly from Python, but then we MUST do it before any library has imported NumPy. Or, alternatively, we can set it as global environment variables. On Linux, you can add these lines to your <a href="https://www.quora.com/What-is-profile-file-in-Linux"><code class="language-plaintext highlighter-rouge">~/.profile</code> file</a>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">OPENBLAS_NUM_THREADS</span><span class="o">=</span>1
+<span class="nv">MKL_NUM_THREADS</span><span class="o">=</span>1
+<span class="nv">VECLIB_MAXIMUM_THREADS</span><span class="o">=</span>1
+<span class="nv">NUMEXPR_NUM_THREADS</span><span class="o">=</span>1</code></pre></figure>
+
+<p>Notice how we did not set the number of OpenMP threads to 1 in the <code class="language-plaintext highlighter-rouge">~/.profile</code> file, as that would likely disable parallelism for most programs that use OpenMP for parallel code execution.</p>
+
+<p><strong>Note that if we set <code class="language-plaintext highlighter-rouge">OMP_NUM_THREADS</code> to 1, then parallelism with Numba and Cython will not work.</strong></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">set_threads</span><span class="p">(</span>
+    <span class="n">num_threads</span><span class="p">,</span>
+    <span class="n">set_blas_threads</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">set_numexpr_threads</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">set_openmp_threads</span><span class="o">=</span><span class="bp">False</span>
+<span class="p">):</span>
+    <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_threads</span><span class="p">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Number of threads must be an integer."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">set_blas_threads</span><span class="p">:</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"OPENBLAS_NUM_THREADS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_threads</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"MKL_NUM_THREADS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_threads</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"VECLIB_MAXIMUM_THREADS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_threads</span>
+    <span class="k">if</span> <span class="n">set_numexpr_threads</span><span class="p">:</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"NUMEXPR_NUM_THREADS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_threads</span>
+    <span class="k">if</span> <span class="n">set_openmp_threads</span><span class="p">:</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"OMP_NUM_THREADS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_threads</span>
+
+<span class="n">set_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></code></pre></figure>
+
+<p>Now, we can import numpy to our code and it will only run on only one core.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span></code></pre></figure>
+
+<h2 id="parallel-code-with-joblib-and-multiprocessing">Parallel code with Joblib and multiprocessing</h2>
+
+<p>Python does not support parallel threading. This means that each Python process can only do one thing at a time. The reason for this lies with the way Python code is run on your computer. Countless hours has been spent trying to remove this limitation, but all sucessfull attempts severly impaired the speed of the language (the most well known attempt is Larry Hasting’s <a href="https://github.com/larryhastings/gilectomy">gilectomy</a>).</p>
+
+<p>Since we cannot run code in parallel within a single process, we need to start new processes for each task we wish to compute in parallel and send the relevant information to these processes. This leads to a lot of overhead, and if we hope to have any performance gain, then we should parallelise substantial tasks if we wish to do it with multiple processes.</p>
+
+<h3 id="the-best-approach-joblib">The best approach: Joblib</h3>
+
+<p>The best approach to multiprocessing in Python is through the Joblib library. It overcomes some of the shortcomings of multiprocessing (that you may not realise is a problem until you encounter them) at the cost of an extra dependency in your code. Below, we see an example of parallel code with joblib</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="n">numbers1</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">numbers1</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+</code></pre></div></div>
+
+<p>Here we see how Joblib can help us parallelise simple for loops. We wrap what we wish to compute in a function and use it in a list comprehension. The <code class="language-plaintext highlighter-rouge">n_jobs</code> argument specifies how many processes to spawn. If it is a positive number (1, 2, 4, etc.) then it is the number of processes to spawn and if it is a negative number then joblib will spawn (n_cpu_threads + 1 - n_processes). Thus <code class="language-plaintext highlighter-rouge">n_jobs=-1</code> will spawn as many processes as there are CPU threads available, <code class="language-plaintext highlighter-rouge">n_jobs=-2</code> will spawn n-1 CPU threads, etc.</p>
+
+<p>I recommend setting <code class="language-plaintext highlighter-rouge">n_jobs=-2</code> so you have one CPU thread free to surf the web while you run hard-core experiments on your computer.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">numbers1</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">numbers1</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+</code></pre></div></div>
+
+<p>If we cannot wrap all the logic within a single function, but need to have two separate parallel loops, then we should use the <code class="language-plaintext highlighter-rouge">Parallel</code> object in a slightly different fashion. If we do the following:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="n">numbers1</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">numbers2</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+
+
+<span class="k">print</span><span class="p">(</span><span class="n">numbers1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">numbers2</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+</code></pre></div></div>
+
+<p>Then we will first create two new Python processes, compute the parallel list comprehension, close these two processess before spawning two new Python processes and computing the second parallel list comprehension. This is obviously not ideal, and we can reuse the pool of processes with a context manager:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">with</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">parallel</span><span class="p">:</span>
+    <span class="n">numbers1</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">numbers2</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">numbers1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">numbers2</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+</code></pre></div></div>
+
+<p>Here, the same processes are used for both list comprehensions!</p>
+
+<h2 id="async-operations-with-multiprocessing">Async operations with multiprocessing</h2>
+<p>An alternative to using Joblib for multiprocessing in Python is to use the builtin <code class="language-plaintext highlighter-rouge">multiprocessing</code> module.
+This module is not as user friendly as joblib, and may break with weird error messages.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="k">def</span> <span class="nf">add_2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="k">with</span> <span class="n">multiprocessing</span><span class="p">.</span><span class="n">Pool</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="nb">map</span><span class="p">(</span><span class="n">add_2</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+</code></pre></div></div>
+
+<p>Here, we see that multiprocessing also requires us to wrap the code we wish to run in parallel in a function.</p>
+
+<p>However, one particular of multiprocessing is that it requires all inputs to be picklable. That means that we cannot use output a factory function and you may also have problems with using multiprocessing with instance methods. Below is an example that fails.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_x</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="k">return</span> <span class="n">add_x</span>
+
+<span class="n">add_2</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">add_2</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="k">with</span> <span class="n">multiprocessing</span><span class="p">.</span><span class="n">Pool</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">p</span><span class="p">.</span><span class="nb">map</span><span class="p">(</span><span class="n">add_2</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>4
+
+
+
+---------------------------------------------------------------------------
+
+AttributeError                            Traceback (most recent call last)
+
+&lt;ipython-input-9-6e36bedeabae&gt; in &lt;module&gt;
+     10 
+     11 with multiprocessing.Pool(4) as p:
+---&gt; 12     p.map(add_2, range(10))
+
+
+/usr/lib/python3.8/multiprocessing/pool.py in map(self, func, iterable, chunksize)
+    362         in a list that is returned.
+    363         '''
+--&gt; 364         return self._map_async(func, iterable, mapstar, chunksize).get()
+    365 
+    366     def starmap(self, func, iterable, chunksize=None):
+
+
+/usr/lib/python3.8/multiprocessing/pool.py in get(self, timeout)
+    766             return self._value
+    767         else:
+--&gt; 768             raise self._value
+    769 
+    770     def _set(self, i, obj):
+
+
+/usr/lib/python3.8/multiprocessing/pool.py in _handle_tasks(taskqueue, put, outqueue, pool, cache)
+    535                         break
+    536                     try:
+--&gt; 537                         put(task)
+    538                     except Exception as e:
+    539                         job, idx = task[:2]
+
+
+/usr/lib/python3.8/multiprocessing/connection.py in send(self, obj)
+    204         self._check_closed()
+    205         self._check_writable()
+--&gt; 206         self._send_bytes(_ForkingPickler.dumps(obj))
+    207 
+    208     def recv_bytes(self, maxlength=None):
+
+
+/usr/lib/python3.8/multiprocessing/reduction.py in dumps(cls, obj, protocol)
+     49     def dumps(cls, obj, protocol=None):
+     50         buf = io.BytesIO()
+---&gt; 51         cls(buf, protocol).dump(obj)
+     52         return buf.getbuffer()
+     53 
+
+
+AttributeError: Can't pickle local object 'add.&lt;locals&gt;.add_x'
+</code></pre></div></div>
+
+<p>We see that local functions aren’t picklable, however, the same code runs with joblib:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span><span class="p">(</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">add_2</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+</code></pre></div></div>
+
+<h3 id="so-why-use-multiprocessing">So why use multiprocessing?</h3>
+<p>Unfortunately, Joblib blocks the python interpreter, so that while the other processess run, no work can be done on the mother process. See the example below:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">time</span>
+
+<span class="k">def</span> <span class="nf">slow_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">slow_function</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>6.969935655593872
+</code></pre></div></div>
+
+<p>Meanwhile, with multiprocessing, we can start the processes, let those run in the background, and do other tasks while waiting. Here is an example</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">with</span> <span class="n">multiprocessing</span><span class="p">.</span><span class="n">Pool</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="c1"># Start ten processes.
+</span>    <span class="c1"># The signature for the apply_async method is as follows
+</span>    <span class="c1"># apply_async(function, args, kwargs)
+</span>    <span class="c1"># the args iterable is fed into the function using tuple unpacking
+</span>    <span class="c1"># the kwargs iterable is fed into the function using dictionary unpacking
+</span>    <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">slow_function</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+
+    <span class="n">prev_ready</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">num_ready</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">ready</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">num_ready</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_ready</span> <span class="o">!=</span> <span class="n">prev_ready</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">f"</span><span class="si">{</span><span class="n">num_ready</span><span class="si">}</span><span class="s"> out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span><span class="si">}</span><span class="s"> completed tasks"</span><span class="p">)</span>
+        <span class="n">prev_ready</span> <span class="o">=</span> <span class="n">num_ready</span>
+        <span class="n">num_ready</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">ready</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1 out of 10 completed tasks
+2 out of 10 completed tasks
+5 out of 10 completed tasks
+6 out of 10 completed tasks
+7 out of 10 completed tasks
+8 out of 10 completed tasks
+9 out of 10 completed tasks
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+</code></pre></div></div>
+
+<p>This means that, if you have to do some post processing of the output of the parallel loop, then you can start doing that with the elements that are done. Here is a very simple example</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">with</span> <span class="n">multiprocessing</span><span class="p">.</span><span class="n">Pool</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="c1"># Start ten processes.
+</span>    <span class="c1"># The signature for the apply_async method is as follows
+</span>    <span class="c1"># apply_async(function, args, kwargs)
+</span>    <span class="c1"># the args iterable is fed into the function using tuple unpacking
+</span>    <span class="c1"># the kwargs iterable is fed into the function using dictionary unpacking
+</span>    <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">slow_function</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+
+    <span class="n">finished</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">finished</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">task</span><span class="p">.</span><span class="n">ready</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">finished</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">f"Task </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s"> just finished, its result was </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+                <span class="n">finished</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="n">get</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">([</span><span class="n">finished</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Task 0 just finished, its result was 0
+Task 1 just finished, its result was 1
+Task 2 just finished, its result was 2
+Task 3 just finished, its result was 3
+Task 4 just finished, its result was 4
+Task 5 just finished, its result was 5
+Task 6 just finished, its result was 6
+Task 7 just finished, its result was 7
+Task 8 just finished, its result was 8
+Task 9 just finished, its result was 9
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+</code></pre></div></div>
+
+<h2 id="parallelising-with-numba">Parallelising with Numba</h2>
+
+<p>Numba is a magical tool that will let us write Python code that is just in time compiled (JIT) to machine code using LLVM. This means that we can get C-speed with our Python code!</p>
+
+<p>Unfortunately, the price of this black magic is that Numba doesn’t support the whole Python language. Rather, it supports a subset of it. Especially if you enable <code class="language-plaintext highlighter-rouge">nopython</code> mode (doing work outside the Python virtual machine) to get the best speedups.</p>
+
+<p>Let us start by looking at some simple non-parallel Numba tricks</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numba</span>
+
+<span class="k">def</span> <span class="nf">python_sum</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="o">@</span><span class="n">numba</span><span class="p">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">numba_normal_sum</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">s</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Pure python"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">python_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">numba_normal_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Pure python
+2.09 ms ± 31.9 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+Numba
+10.5 µs ± 254 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+</code></pre></div></div>
+
+<p>We see that the numba compiled code is much faster than the plain python code (more than x100). The downside with writing code this way is that error messages are cryptic  and a function that is JIT compiled can only call a subset of all Python, NumPy and SciPy functions in addition to other JIT compiled functions. See the documentation for more info on this.</p>
+
+<p>However, we can also parallelise code with Numba, using the <code class="language-plaintext highlighter-rouge">numba.prange</code> (parallel range) function. This code is cheekily stolen from the <a href="https://numba.pydata.org/numba-doc/0.11/prange.html">documentation</a></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">@</span><span class="n">numba</span><span class="p">.</span><span class="n">jit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">numba_parallel_sum</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">numba</span><span class="p">.</span><span class="n">prange</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">s</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">numba_normal_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># compile it once
+</span><span class="n">numba_parallel_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># compile it once
+</span><span class="k">print</span><span class="p">(</span><span class="s">"Pure python"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">python_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">numba_normal_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Parallel Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">numba_parallel_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Pure python
+2.09 ms ± 16.7 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+
+Numba
+10.4 µs ± 97.4 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+
+Parallel Numba
+28.7 µs ± 462 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+</code></pre></div></div>
+
+<p>Here, we see that the performance actually deteriorates by parallising the code! This is because of the extra overhead needed to organise multiple workers. However, sometimes parallelising code this way can lead to significant speedups (especially if each iteration is costly).</p>
+
+<p>We can use Cython to reduce the overhead that we experience with the parallel sum.</p>
+
+<p><strong>Note:</strong> It is difficult to use Numba on the outer loop, so if you have costly outer loops, then you should use Joblib to have the parallelism there instead.</p>
+
+<h2 id="parallel-code-with-cython">Parallel code with Cython</h2>
+<p>Finally, we look at Cython to optimise and paralellise code. Cython is a language that will let us write Python-like code that is transpiled into a Python C extension. This means several things:</p>
+
+<ol>
+  <li>We can get C speed without much effort</li>
+  <li>Cython is a superset of Python, so any Python code can be compiled</li>
+  <li>It is easier to write Cython, but it requires manual compilation.</li>
+</ol>
+
+<p>The first two points here make Cython a very attractive alternative. However, the final point can be very problematic. Whenever you make a change to a Cython file, you need to compile it again. This is generally done via a <code class="language-plaintext highlighter-rouge">setup.py</code> file that contains build instructionsf for your Cython files.</p>
+
+<p>Luckily, we can prototype some Cython code in a notebook, using the <code class="language-plaintext highlighter-rouge">%%cython</code> magic command.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">%</span><span class="n">load_ext</span> <span class="n">Cython</span></code></pre></figure>
+
+<p>The code below is just copy pasted from above, but the inclusion of the <code class="language-plaintext highlighter-rouge">%%cython</code> cell magic means that the code is now compiled and can run faster its pure Python counterpart. Just copy pasting code this way will not massively improve runtime.</p>
+
+<figure class="highlight"><pre><code class="language-cython" data-lang="cython"><span class="o">%%</span><span class="n">cython</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">def</span> <span class="nf">cython_sum</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">s</span></code></pre></figure>
+
+<p>Unfortunately, the code above is sill running in the CPython virtual machine which are a lot slower than a pure C function. Let us fix this, to do that, we avoid any Python data types, and only use the C counterparts.</p>
+
+<figure class="highlight"><pre><code class="language-cython" data-lang="cython"><span class="o">%%</span><span class="n">cython</span>
+<span class="kn">cimport</span> <span class="nn">cython</span>
+<span class="kn">cimport</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="o">@</span><span class="n">cython</span><span class="p">.</span><span class="nf">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>  <span class="c1"># Do not check if Numpy indexing is valid
+</span><span class="o">@</span><span class="n">cython</span><span class="p">.</span><span class="nf">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>   <span class="c1"># Deactivate negative Numpy indexing.
+</span><span class="k">cpdef</span> <span class="nf">smart_cython_sum</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">float_t</span><span class="p">]</span> <span class="n">A</span><span class="p">):</span>  
+<span class="c1"># ^ Notice cpdef instead of def. Define it as a C function and Python function simultaneously.
+</span>    <span class="k">cdef</span> <span class="kt">float</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">cdef</span> <span class="kt">int</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">s</span></code></pre></figure>
+
+<p>Now, we can look at how to make this run in parallel. To do this, we need OpenMP (which runs a bit differently on linux and windows).</p>
+
+<figure class="highlight"><pre><code class="language-cython" data-lang="cython"><span class="o">%%</span><span class="n">cython</span> <span class="o">--</span><span class="nb">compile</span><span class="o">-</span><span class="n">args</span><span class="o">=-</span><span class="n">fopenmp</span> <span class="o">--</span><span class="n">link</span><span class="o">-</span><span class="n">args</span><span class="o">=-</span><span class="n">fopenmp</span> <span class="o">--</span><span class="n">force</span>
+<span class="kn">from</span> <span class="nn">cython.parallel</span> <span class="kn">import</span> <span class="n">prange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="kn">cimport</span> <span class="nn">cython</span>
+<span class="kn">cimport</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">cimport</span> <span class="nn">openmp</span>
+
+
+<span class="o">@</span><span class="n">cython</span><span class="p">.</span><span class="nf">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>  <span class="c1"># Do not check if Numpy indexing is valid
+</span><span class="o">@</span><span class="n">cython</span><span class="p">.</span><span class="nf">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>   <span class="c1"># Deactivate negative Numpy indexing.
+</span><span class="k">cpdef</span> <span class="nf">parallel_cython_sum</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">float_t</span><span class="p">]</span> <span class="n">A</span><span class="p">):</span>  
+<span class="c1"># ^ Notice cpdef instead of def. Define it as a C function and Python function simultaneously.
+</span>    <span class="k">cdef</span> <span class="kt">float</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">cdef</span> <span class="kt">int</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">prange</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">nogil</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">num_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+
+    <span class="k">return</span> <span class="n">s</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Pure python"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">python_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">numba_normal_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Parallel Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">numba_parallel_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Naive Cython"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">cython_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Smart Cython"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">smart_cython_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Parallel Cython"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">parallel_cython_sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Pure python
+2.25 ms ± 137 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+
+Numba
+10.6 µs ± 108 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+
+Parallel Numba
+33.3 µs ± 2.58 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+
+Naive Cython
+2.47 ms ± 88.8 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+
+Smart Cython
+44.4 µs ± 1.63 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+
+Parallel Cython
+14.4 µs ± 3.55 µs per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+</code></pre></div></div>
+
+<p>From this, we see a couple of things</p>
+
+<ol>
+  <li>There is little difference between pure Python and naive Cython</li>
+  <li>Pure Numba is faster than sophisticated Cython for this example</li>
+  <li>The parallel code in Cython has much less overhead than the parallel code in Numba</li>
+</ol>
+
+<p>In general, it is difficult to say if Numba or Cython will be fastest. The reason for this is that Numba may or may not be able to lift the CPython virtual machine. If it isn’t able to do so, it will often be much slower than Cython.</p>
+
+<p>Thus, if Numba works, it is often as good as, if not better than Cython. You should therefore start with Numba, and if that doesn’t provide a good enough speed up, then you can try Cython.</p>
+
+<p>Long functions are often easier to implement in Cython and small ones are often best implemented in Numba. A big downside with Cython (that cannot be stressed enough) is that it adds huge overhead for building and distributing the code. I therefore discourage the use of Cython for code that will be made public unless all other options are tested first.</p>
+
+<h2 id="vectorisation-with-numba">Vectorisation with Numba</h2>
+<p>Finally, we will look at vectorisation of functions with Numba. Vectorisation is when we wish to apply the same function to all elements of an array. For example, the <code class="language-plaintext highlighter-rouge">exp</code> function in NumPy is a vectorised function.</p>
+
+<p>Let us create a vectorised function to compute the Mandelbrot set.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">@</span><span class="n">np</span><span class="p">.</span><span class="n">vectorize</span>
+<span class="k">def</span> <span class="nf">compute_mandelbrot_np</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
+<span class="o">@</span><span class="n">numba</span><span class="p">.</span><span class="n">vectorize</span><span class="p">([</span><span class="n">numba</span><span class="p">.</span><span class="n">int32</span><span class="p">(</span><span class="n">numba</span><span class="p">.</span><span class="n">complex128</span><span class="p">)],</span> <span class="n">target</span><span class="o">=</span><span class="s">"cpu"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">compute_mandelbrot_cpu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="o">@</span><span class="n">numba</span><span class="p">.</span><span class="n">vectorize</span><span class="p">([</span><span class="n">numba</span><span class="p">.</span><span class="n">int32</span><span class="p">(</span><span class="n">numba</span><span class="p">.</span><span class="n">complex128</span><span class="p">)],</span> <span class="n">target</span><span class="o">=</span><span class="s">"parallel"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">compute_mandelbrot_parallel</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">X</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.235</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="mf">0.827</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">4.0e-1</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span> <span class="o">+</span> <span class="n">R</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">R</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">R</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">zz</span> <span class="o">=</span> <span class="n">xx</span> <span class="o">+</span> <span class="mf">1j</span><span class="o">*</span><span class="n">yy</span>
+
+<span class="n">compute_mandelbrot_cpu</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span>  <span class="c1"># Compile once
+</span><span class="n">compute_mandelbrot_parallel</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span>  <span class="c1"># Compile once
+</span><span class="k">print</span><span class="p">(</span><span class="s">"Single core NumPy"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">compute_mandelbrot_np</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Single core Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">compute_mandelbrot_cpu</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Multi core Numba"</span><span class="p">)</span>
+<span class="o">%</span><span class="n">timeit</span> <span class="n">compute_mandelbrot_parallel</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span></code></pre></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Single core NumPy
+10.5 ms ± 3.1 ms per loop (mean ± std. dev. of 7 runs, 100 loops each)
+Single core Numba
+421 µs ± 41.2 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+Multi core Numba
+396 µs ± 224 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+</code></pre></div></div>
+
+<p>Here, we see not only the effect of just in time compiling our function but also that all our CPU cores are fully utilised when vectorizing functions! Let us plot a section of the mandelbrot set!</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">%</span><span class="n">config</span> <span class="n">InlineBackend</span><span class="p">.</span><span class="n">figure_format</span> <span class="o">=</span> <span class="s">'retina'</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">X</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.235</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="mf">0.827</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">4.0e-1</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span> <span class="o">+</span> <span class="n">R</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">R</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">R</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">zz</span> <span class="o">=</span> <span class="n">xx</span> <span class="o">+</span> <span class="mf">1j</span><span class="o">*</span><span class="n">yy</span>
+<span class="n">mandelbrot</span> <span class="o">=</span> <span class="n">compute_mandelbrot_parallel</span><span class="p">(</span><span class="n">zz</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mandelbrot</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">axis</span><span class="p">(</span><span class="s">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span></code></pre></figure>
+
+<p><img src="/assets/notebooks/2020-06-13-parallel-python_files/2020-06-13-parallel-python_53_0.png" alt="Mandelbrot" /></p>
+
+      </article>
+    </div>
+    
+      <div class="categories">
+    <span><p>Categories:</p>
+    
+    
+      <a href="
+      /categories/#python">Python</a>
+       
+    
+  </span>
+</div>
+    
+
+    
+      <div class="related">
+
+    <h4>You May Also Enjoy</h4>
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+        
+    
+        
+    
+      
+    
+        
+        
+    
+        
+    
+        
+          <div class = "related-posts">
+          <h5><a href="/2020/06/13/python-project-management.html">• Managing a Python project</a></h5>
+          </div>
+          
+          
+        
+    
+      
+    
+        
+        
+    
+        
+    
+        
+    
+      
+    
+    </div>
+    
+
+    
+      <section class="disqus">
+    <p id="load-comments" onclick="loadDisqus()">Load Comments</p>
+    <div id="disqus_thread"></div>
+
+    <script id="loadDisqus" type="text/javascript">
+      var disqus_loaded = false;
+      var disqus_shortname = "your_username";
+      var disqus_identifier = "/2020/06/13/parallel-python.html";
+      function loadDisqus() {
+        var e = document.createElement('script'); 
+        e.type = 'text/javascript'; 
+        e.async = true;
+        e.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(e);
+        document.getElementById("load-comments").style.display = "none";
+      };
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments.</a></noscript>
+</section>
+    
+  </div><footer class= "footer">
+    <p>Copyright© visualizards 2020. All right reserved. Theme designed by <a href="https://alessiofranceschi.me/">Alessio Franceschi</a>.</p>
+</footer>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</body>
+</html>
