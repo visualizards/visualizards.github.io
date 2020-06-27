@@ -5,7 +5,6 @@ categories: [Python]
 description: "A howto on parallel programming in Python"
 ---
 
-# Parallel programming in Python
 *[Download notebook](/assets/notebooks/2020-06-13-parallel-python.ipynb)*
 
 It is sometimes stated that parallel code is difficult in Python. However, for most scientific applications, we can achieve the level of parallelism without much effort. In this notebook I will show some simple ways to get parallel code execution in Python.
