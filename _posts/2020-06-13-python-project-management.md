@@ -87,7 +87,7 @@ metadata about our package without running a Python file first! The
 [metadata]      
 name = {package-name}
 version = {version number: 0.0.0}
-license = {license name, e.g. MIT>   }
+license = {license name, e.g. MIT}
 description = {A short description}
 long_description = file: README.rst
 author = {Author name}
