@@ -23,7 +23,7 @@ a:hover{
     font-feature-settings: "ss01", "kern";
 
     @include media-query($on-palm) {
-        padding-right: none;
+        padding-right: 0px;
         font-size: 3*$base-font-size;
     }
 
