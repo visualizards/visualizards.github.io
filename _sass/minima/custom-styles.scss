@@ -24,7 +24,7 @@ a:hover{
 
     @include media-query($on-palm) {
         padding-right: none;
-        font-size: 3.5*$base-font-size;
+        font-size: 3*$base-font-size;
     }
 
 }
