@@ -12,8 +12,8 @@ Also, this tutorial will always be a work in progress (or at least so
 long as best practice can change), so the tutorial might change at any
 time. However, you can always read old versions of the tutorial, since
 it is covered by source control. Finally, if you have any constructive
-critic on the contents in this tutorial, please raise an Issue with the
-Issue tracker.
+criticism on the contents in this tutorial, please raise an Issue with
+the [issue tracker](https://github.com/yngvem/python-project-structure/issues).
 
  * 
 {:toc}
