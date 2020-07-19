@@ -1,3 +1,5 @@
+Before pushing:
+
 Mandatory:
  * Add title `title: Parallel programming in Python`
  * Set layout `layout: post`
@@ -19,6 +21,10 @@ ingress : >
   dolor sit amet
 ```
 
+After pushing:
+ * Check that post shows up
+ * Check that design of post is correct
+ * Check that link in archive is correct
 
 Categories:
  * Python
