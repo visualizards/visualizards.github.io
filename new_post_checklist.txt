@@ -1,13 +1,15 @@
 Mandatory:
  * Add title `title: Parallel programming in Python`
  * Set layout `layout: post`
- * Set categories `categories: [Python]`
+ * Select categories `categories: [Python]`
+ * Add any new categories to category list in this file
  * Set description `description: "A howto on parallel programming in Python"`
  * Add to archive
  * Is it a notebook?
    * Add notebook or zipfile with notebook to assets/notebooks
-   * Link name of notebook (in assets) `jupyter: 2020-06-13-parallel-python.ipynb`
- * Don't use H1 (single #), it will have the same style as the title
+   * Link name of notebook (or zipfile) name (in assets) `jupyter: 2020-06-13-parallel-python.ipynb`
+ * Never use H1 tags (single #) unless you want same style as post title
+ * Don't repeat title in the first heading, if you do, it will occur twice
 
 Optional:
  * Add ingress 
@@ -17,3 +19,9 @@ ingress : >
   dolor sit amet
 ```
 
+
+Categories:
+ * Python
+ * Project management
+ * Teaching
+ * Visualisation
