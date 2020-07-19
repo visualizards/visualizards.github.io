@@ -1,0 +1,153 @@
+// Placeholder to allow defining custom styles that override everything else.
+// (Use `_sass/minima/custom-variables.scss` to override variable defaults)
+
+a {
+    color: inherit
+}
+.site-header{
+    border:none;
+}
+.site-title{
+    margin-top: $spacing-unit*2;
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 4*$base-font-size;
+    font-weight: bold;
+    -moz-font-feature-settings: "ss01";
+  -webkit-font-feature-settings: "ss01";
+  font-feature-settings: "ss01", "kern";;
+}
+.site-title::first-letter{
+  -moz-font-feature-settings: "ss02";
+  -webkit-font-feature-settings: "ss02";
+  font-feature-settings: "ss02", "kern";;
+}
+.site-subtitle{
+    font-size: 1.1*$base-font-size;
+    font-family: $text-font-family;
+    font-style: italic;
+    font-weight: bold;
+    text-align:center;
+    clear:both;
+    display:block;
+    width:100%;
+    height: 30px;
+    line-height: 30px;
+}
+.site-nav {
+    position: static;
+    float: none;
+    border: none;
+    background-color: inherit;
+    width: 100%;
+}
+
+.site-menu{
+    display:block;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5*$base-font-size;
+}
+
+.site-nav .page-link{
+    display: inline-block;
+    -moz-font-feature-settings:"dlig", "kern";
+    -webkit-font-feature-settings: "dlig", "kern";
+    font-feature-settings:"dlig",  "kern";
+    word-wrap: normal;
+}
+
+.page-link.current-page{
+    border-bottom: 5px solid $text-color;
+}
+
+.site-nav .page-link::first-letter{
+  -moz-font-feature-settings: "ss01";
+  -webkit-font-feature-settings: "ss01";
+  font-feature-settings: "ss01", "kern";
+
+}
+.site-nav .page-link:hover{
+    border-bottom: 5px solid $text-color;
+}
+
+.wrapper {
+    max-width: $content-width + 60;
+    padding-right: 30;
+    padding-left: 30;
+}
+
+.ingress {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 1.1*$base-font-size
+}
+
+a.notebook {
+    font-family: $text-font-family;
+    font-style: italic;
+}
+
+.post-link{
+    font-family: $base-font-family;
+    font-weight: bold;
+    text-align:center;
+}
+.post-link::first-letter, h1.post-title::first-letter{
+    -moz-font-feature-settings: "ss01";
+  -webkit-font-feature-settings: "ss01";
+  font-feature-settings: "ss01", "kern";
+}
+
+h1.post-title{
+    font-weight: bold;
+    text-align: center;
+    
+}
+.social-media-list li a, .pagination li a {
+    border: none;
+}
+.post-content p {
+    font-family: $text-font-family;
+}
+
+
+.post-meta{
+    text-align: center;
+    display: block;
+    padding-bottom: $spacing-unit/2;
+    color:inherit;
+    font-family: $text-font-family;
+    font-style: italic;
+}
+
+.post-list li p {
+    font-family: $text-font-family;
+    font-size: $base-font-size * 1.1;
+}
+
+.post-list li h3 .post-link {
+    font-size: $base-font-size * 1.5;
+
+}
+
+a.continue-reading,a.notebook {
+    color:inherit;
+    border-bottom: 5px solid #e1e1e1;
+    font-style: italic;
+}
+
+a.continue-reading:hover,a.notebook:hover{
+    background-color: #e1e1e1;;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+.home{
+    width:100%;
+}
+

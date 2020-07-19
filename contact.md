@@ -1,4 +1,5 @@
 ---
-layout: contact
+layout: page
 title: Contact
+permalink: /contact/
 ---

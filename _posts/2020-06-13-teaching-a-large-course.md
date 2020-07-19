@@ -3,9 +3,9 @@ title: Teaching a large course at a university
 layout: post
 categories: [Teaching]
 description: "Reflections after teaching a large course at a university"
+ingress: >
+  Recently, I had the pleasure of teaching the introduction to programming course at the Norwegian University of Life Sciences. This course is one of the largest at the university with almost 450 enrolled students. I learned a lot while teaching that course, and in this blog post, I hope to share some of these experiences.
 ---
-
-**Recently, I had the pleasure of teaching the introduction to programming course at the Norwegian University of Life Sciences. This course is one of the largest at the university with almost 450 enrolled students. I learned a lot while teaching that course, and in this blog post, I hope to share some of these experiences.**
 
 ## Setting up for a large course
 Before starting to teach a course with this many students, you must plan how to teach it. We decided to have one 90 minute theory lecture (2x45 minutes + 15-minute break) and one 90 minutes live programming lecture each week. Also, we hired a large team of teaching assistants to host a total of 10 tutorial sessions per week, each lasting for 90 minutes. In these sessions, students could ask the teaching assistants (TAs) questions about weekly problem sheets and the mandatory coursework.
