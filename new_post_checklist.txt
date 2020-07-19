@@ -1,0 +1,19 @@
+Mandatory:
+ * Add title `title: Parallel programming in Python`
+ * Set layout `layout: post`
+ * Set categories `categories: [Python]`
+ * Set description `description: "A howto on parallel programming in Python"`
+ * Add to archive
+ * Is it a notebook?
+   * Add notebook or zipfile with notebook to assets/notebooks
+   * Link name of notebook (in assets) `jupyter: 2020-06-13-parallel-python.ipynb`
+ * Don't use H1 (single #), it will have the same style as the title
+
+Optional:
+ * Add ingress 
+```
+ingress : >
+  Lorem ipsum
+  dolor sit amet
+```
+
