@@ -28,7 +28,15 @@ layout: default
 
   <div class="post-content e-content" itemprop="articleBody">
   {%- if page.jupyter -%}
-  <a class="notebook" href="assets/notebooks/{{page.jupyter}}">Click here to download notebook</a>
+  <p>
+    <a class="notebook" href="assets/notebooks/{{page.jupyter}}">Click here to download notebook</a>
+  </p>
+  {%- endif -%}
+
+  {%- if page.github -%}
+  <p>
+    <a class="repo" href="{{page.github}}">Link to project repository</a>
+  </p>
   {%- endif -%}
 
   {%- if page.ingress -%}
