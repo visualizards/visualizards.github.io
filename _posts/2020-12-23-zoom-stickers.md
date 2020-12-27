@@ -9,10 +9,10 @@ Recently, we watched [this](https://www.youtube.com/watch?v=9z9mbiOZqSs) video b
 
 <table>
 <tr>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/normal_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/thumbs_up_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/question_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/heart_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/normal_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/thumbs_up_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/question_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/heart_video.png" /></td>
 </tr>
 </table>
 
@@ -53,7 +53,7 @@ This code will first import OpenCV (which is called `cv2` in Python). Then, we r
 To train our deep learning model, we use [Teachable Machine](https://teachablemachine.withgoogle.com/), a free, online tool that makes training deep learning models easy! By using it, we can create computer vision models that can classify images. To teach such models to distinguish gestures, we first need to supply our computer with a *training set* — a dataset of images and corresponding labels. 
 
 
-|<img src="assets/images/20-12-23-zoom-stickers/screenshots/teachable_machine.png" width="800px">|
+|<img src="/assets/images/20-12-23-zoom-stickers/screenshots/teachable_machine.png" width="800px">|
 |:----:|
 | *The Teachable Machine user interface* |
 
@@ -64,7 +64,7 @@ Luckily, Teachable Machine also provides an easy-to-use interface to create a tr
 3. Raise hand
 4. Heart
 
-|<img src="assets/images/20-12-23-zoom-stickers/screenshots/training_data.png" width="400px">|
+|<img src="/assets/images/20-12-23-zoom-stickers/screenshots/training_data.png" width="400px">|
 |:----:|
 |*Collecting training data for the "Thumbs up" class*|
 
@@ -72,7 +72,7 @@ After creating the dataset, we trained the deep learning model by pressing the T
 
 After testing the model, we saw that it worked great! You can see an example where it correctly recognise the "heart" class below. To use this model with our Python script, we pressed *Export Model*, selected the Tensorflow tab and downloaded a Keras .h5 model.
 
-|<img src="assets/images/20-12-23-zoom-stickers/screenshots/preview.png" height="400px">|
+|<img src="/assets/images/20-12-23-zoom-stickers/screenshots/preview.png" height="400px">|
 |:----:|
 |*Testing the model before we download it*|
 
@@ -216,10 +216,10 @@ Let's test this!
 
 <table>
 <tr>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/normal_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/thumbs_up_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/question_video.png" /></td>
-<td><img src="assets/images/20-12-23-zoom-stickers/screenshots/heart_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/normal_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/thumbs_up_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/question_video.png" /></td>
+<td><img src="/assets/images/20-12-23-zoom-stickers/screenshots/heart_video.png" /></td>
 </tr>
 </table>
 
