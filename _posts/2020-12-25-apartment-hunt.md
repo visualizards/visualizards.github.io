@@ -40,7 +40,7 @@ Note, that Finn updates their webpages often and if you want to try something si
 <i>    </i> 
  Result:
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-┃<b> adresse                            </b>┃<b> felleskost/mnd. </b>┃<b> totalpris </b>┃<b> primærrom </b>┃<b> bruksareal </b>┃<b> sykkeltid-uio </b>┃<b> sykkeltid-met </b>┃
+┃ adresse                            ┃ felleskost/mnd. ┃ totalpris ┃ primærrom ┃ bruksareal ┃ sykkeltid-uio ┃ sykkeltid-met ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
 │ Øvrefoss 6H, 0555 Oslo             │ 8044            │ 3173248   │ 38.0      │ 57.0       │ 20            │ 11            │
 │ Middelthuns gate 11B, 0368 Oslo    │ 2926            │ 3566090   │ 50.0      │ 50.0       │ 12            │ 6             │
@@ -63,7 +63,7 @@ However, just because an apartment is cheap in total does not mean the price per
 <i>    </i> 
  Result:
 ┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-┃<b> kvadratmeterpris </b>┃<b> adresse         </b>┃<b> felleskost/mnd. </b>┃<b> totalpris </b>┃<b> primærrom </b>┃<b> bruksareal </b>┃<b> sykkeltid-uio </b>┃<b> sykkeltid-met </b>┃
+┃ kvadratmeterpris ┃ adresse         ┃ felleskost/mnd. ┃ totalpris ┃ primærrom ┃ bruksareal ┃ sykkeltid-uio ┃ sykkeltid-met ┃
 ┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
 │ 55671.017543859… │ Øvrefoss 6H,    │ 8044            │ 3173248   │ 38.0      │ 57.0       │ 20            │ 11            │
 │                  │ 0555 Oslo       │                 │           │           │            │               │               │
@@ -89,7 +89,7 @@ primærrom<b>)</b>. Then, most apartments we find have a balcony.
 <i>    </i> 
  Result:
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-┃<b> adresse                            </b>┃<b> felleskost/mnd. </b>┃<b> totalpris </b>┃<b> primærrom </b>┃<b> bruksareal </b>┃<b> sykkeltid-uio </b>┃<b> sykkeltid-met </b>┃
+┃ adresse                            ┃ felleskost/mnd. ┃ totalpris ┃ primærrom ┃ bruksareal ┃ sykkeltid-uio ┃ sykkeltid-met ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
 │ Øvrefoss 6H, 0555 Oslo             │ 8044            │ 3173248   │ 38.0      │ 57.0       │ 20            │ 11            │
 │ Sporveisgata 8A, 0354 Oslo         │ 4613            │ 5134207   │ 88.0      │ 99.0       │ 13            │ 2             │
@@ -121,7 +121,7 @@ And a short commute
 <i>    </i> 
  Result:
 ┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
-┃<b> adresse     </b>┃<b> felleskost/… </b>┃<b> totalpris </b>┃<b> primærrom </b>┃<b> bruksareal </b>┃<b> sykkeltid-… </b>┃<b> sykkeltid-m… </b>┃<b> kollektivt… </b>┃<b> kollektivti… </b>┃
+┃ adresse     ┃ felleskost/… ┃ totalpris ┃ primærrom ┃ bruksareal ┃ sykkeltid-… ┃ sykkeltid-m… ┃ kollektivt… ┃ kollektivti… ┃
 ┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
 │ Dalsbergst… │ 5317         │ 2654246   │ 20.0      │ 18.0       │ 14          │ 1            │ 18          │ 5            │
 │ 3, 0170     │              │           │           │            │             │              │             │              │
@@ -174,7 +174,7 @@ And a short commute
 <i>    </i> 
  Result:
 ┏━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┓
-┃<b> postnummer </b>┃<b> AVG(totalpris/bruksareal) </b>┃<b> AVG(totalpris)     </b>┃<b> AVG(bruksareal)    </b>┃<b> COUNT(totalpris) </b>┃
+┃ postnummer ┃ AVG(totalpris/bruksareal) ┃ AVG(totalpris)     ┃ AVG(bruksareal)    ┃ COUNT(totalpris) ┃
 ┡━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━┩
 │ 0286       │ 207172.20547945207        │ 30247142.0         │ 146.0              │ 1                │
 │ 0252       │ 163264.66615766368        │ 21487687.5         │ 115.5              │ 2                │
