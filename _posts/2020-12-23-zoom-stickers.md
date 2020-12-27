@@ -3,7 +3,7 @@ title: Create your own webcam stickers in Python
 layout: post
 categories: [Python]
 description: "How to add gesture activated stickers to a webcam stream with Python"
-github: "https://github.com/MarieRoald/zoom-stickers"
+repo: "https://github.com/MarieRoald/zoom-stickers"
 ---
 
 Recently, we watched [this](https://www.youtube.com/watch?v=9z9mbiOZqSs) video by [CodingTrain](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw), where Daniel Shiffman shows how we can create a JavaScript app to add custom stickers to zoom video feeds. We thought this was a really awesome project, and wondered if we could achieve something similar could be with Python instead! Additionally, this seemed to be a good excuse for finally checking out Teachable Machine. 
