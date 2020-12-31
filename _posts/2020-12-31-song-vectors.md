@@ -3,6 +3,7 @@ title: Exploring song lyrics with GLoVe
 layout: post
 categories: [Python]
 repo: "https://github.com/yngvem/song-vec"
+description: "What was the mood of this decade's song lyrics? We used Word2Vec to answer this question!"
 ---
 ## About the app
 **[See the web app](https://song-vec.herokuapp.com)**
