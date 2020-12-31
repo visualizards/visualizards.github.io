@@ -4,7 +4,7 @@ layout: post
 categories: [Teaching]
 description: "Reflections after teaching a large course at a university"
 ingress: >
-  Recently, I had the pleasure of teaching the introduction to programming course at the Norwegian University of Life Sciences. This course is one of the largest at the university with almost 450 enrolled students. I learned a lot while teaching that course, and in this blog post, I hope to share some of these experiences.
+  In the spring of 2020, I had the pleasure of teaching the introduction to programming course at the Norwegian University of Life Sciences. This course is one of the largest at the university with almost 450 enrolled students. I learned a lot while teaching that course, and in this blog post, I hope to share some of these experiences.
 ---
 
 ## Setting up for a large course

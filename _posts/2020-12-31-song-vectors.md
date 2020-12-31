@@ -4,16 +4,17 @@ layout: post
 categories: [Python]
 repo: "https://github.com/yngvem/song-vec"
 description: "What was the mood of this decade's song lyrics? We used Word2Vec to answer this question!"
+ingress: >
+    Word vectors are a way to represent words in a high-dimensional space. 
+    The most commonly known word vectors are those obtained from the `word2vec` 
+    algorithm, which tries to find vectors that are predictive of neighbouring
+    words. For a very good introduction to word vectors, we recommend 
+    <a href="https://www.youtube.com/watch?v=vkfXBGnDplQ">this</a> presentation by Christopher
+    Moody.
 ---
 ## About the app
-**[See the web app](https://song-vec.herokuapp.com)**
+**[See the web app](http://song-vec.visualizards.com)**
 
-Word vectors are a way to represent words in a high-dimensional space. 
-The most commonly known word vectors are those obtained from the `word2vec` 
-algorithm, which tries to find vectors that are predictive of neighbouring
-words. For a very good introduction to word vectors, we recommend 
-[this](https://www.youtube.com/watch?v=vkfXBGnDplQ) presentation by Christopher
-Moody.
 
 The word vectors we used here are GloVe vectors trained on the 
 [GloVe common crawl](https://nlp.stanford.edu/projects/glove/)

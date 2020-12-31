@@ -3,11 +3,11 @@ title: A calmer way to digest the news
 layout: post
 categories: [Python]
 repo: "https://github.com/MarieRoald/news-haiku"
+ingress: >
+    For the past year, the news have made us more and more anxious, and we have caught ourselves *doomscrolling* a bit too much. Therefore, we decided to change how we consume news, and do it through haikus instead of headlines. We take the RSS feed from NRK, the governmental broad casting service of Norway, and extract haikus from the newspage descriptions. You can read a random haiku <a href="http://nyhetshaiku.visualizards.com">here</a> and read the source code by cloning the <a href="https://github.com/MarieRoald/news-haiku">project repo</a>.
 ---
 
-For the past year, the news have made us more and more anxious, and we have caught ourselves *doomscrolling* a bit too much. Therefore, we decided to change how we consume news, and do it through haikus instead of headlines. We take the RSS feed from NRK, the governmental broad casting service of Norway, and extract haikus from the newspage descriptions. You can read the haikus [here](https://nyhetshaiku.herokuapp.com) and read the source code by cloning the [project repo](https://github.com/MarieRoald/news-haiku).
-
-<img src="/assets/images/20-12-26-news-haiku/haiku.png" width="400px" />
+<a href="http://nyhetshaiku.visualizards.com"><img src="/assets/images/20-12-26-news-haiku/haiku.png" width="800px" /></a>
 
 We decided to give ourselves one day to make a haiku detection algorithm and figure out how to serve a webpage with Python. To analyse the text and detect haikus, we used [spaCy](https://spacy.io/). This way, could avoid to split the noun chunks, which drastically increased the quality of the haikus. Then, we needed a way to count syllables, which we did by counting the number of vowels, which we thought worked well to count syllables in Norwegian words.
 

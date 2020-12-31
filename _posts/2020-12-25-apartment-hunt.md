@@ -3,12 +3,12 @@ title: Finding the dream apartment with Python
 layout: post
 categories: [Python]
 description: "We automated the apartment hunt by scraping apartment listings and using the Norwegian public transport API."
+ingress: >
+    Recently, we decided to buy an apartment. However, finding the "dream" apartment is no easy task. Searching for listings in Oslo took much of our time, and we seldomly found one that ticked all boxes. The commute time was especially frustrating since we had to find it manually for each listing! Therefore, we decided to automate the apartment hunt. We made a script to scrape <a href="https://finn.no">Finn.no</a>, Norway's largest apartment listing webpage, and store the results in a local SQL database. Here is a short writeup of our development process. You can also download the scripts we used from the <a href="https://github.com/MarieRoald/apartment_hunt">project repo</a>.
 repo: "https://github.com/MarieRoald/apartment_hunt"
 ---
 
 ## Scraping Finn.no for listings
-Recently, we decided to buy an apartment. However, finding the "dream" apartment is no easy task. Searching for listings in Oslo took much of our time, and we seldomly found one that ticked all boxes. The commute time was especially frustrating since we had to find it manually for each listing! Therefore, we decided to automate the apartment hunt. We made a script to scrape [Finn.no](https://finn.no), Norway's largest apartment listing webpage, and store the results in a local SQL database. Here is a short writeup of our development process. You can also download the scripts we used from the [project repo](https://github.com/MarieRoald/apartment_hunt).
-
 Early on, we realised that we needed to use [Selenium](https://www.selenium.dev/). Finn generates the search result pages with JavaScript, so we couldn't merely parse the HTML for links. Instead, we used Selenium to control a chrome window and get the links for all apartment listings that matched a search query. 
 
 Once we had a list of all apartments from the search results page (so all local apartments for sale), we used the [Requests](https://requests.readthedocs.io/en/master/) library to download the HTML for all these pages and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) to navigate the HTML and extract the relevant information.
