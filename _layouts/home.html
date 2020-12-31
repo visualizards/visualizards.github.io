@@ -33,11 +33,8 @@ layout: default
         <span class="post-meta">{{ post.date | date: date_format }}</span>
         {%- if site.show_excerpts -%}
         <p>
-          {%- if post.descriptions -%}
-          {{ post.description | strip_html | truncatewords:50 }}
-          <a class="continue-reading" href="{{ site.baseurl }}{{ post.url }}">Continue reading...</a>
-          {%- else if post.ingress -%}
-          {{ post.excerpt | strip_html | truncatewords:50 }}
+          {%- if post.ingress -%}
+          {{ post.ingress | truncatewords:50 }}
           <a class="continue-reading" href="{{ site.baseurl }}{{ post.url }}">Continue reading...</a>
           {%- else -%}
           {{ post.excerpt | strip_html | truncatewords:50 }}
