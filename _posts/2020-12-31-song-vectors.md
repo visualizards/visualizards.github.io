@@ -13,7 +13,7 @@ ingress: >
     Moody.
 ---
 ## About the app
-**[See the web app](http://song-vec.visualizards.com)**
+**[See the web app](http://song-vec.azurewebsites.net/)**
 
 
 The word vectors we used here are GloVe vectors trained on the 
@@ -36,6 +36,8 @@ adjectives and nouns from the lyrics.
 
 ## Creating the web app
 To create the web app, we used [Streamlit](https://streamlit.io), a free tool that makes it extremely easy to create a data science dashboard with Python. It is extremely intuitive to work with locally, and deploying the app on Heroku was straightforward once we found [this tutorial](https://github.com/Taxuspt/heroku_streamlit_nginx/). The [code for the live application](https://github.com/yngvem/song-vec/blob/master/SongVec.py) was less than 200 lines of code, and we are pretty happy with the results!
+
+*Update: We moved our deployed applications to Azure since Heroku shut down its free offering*
 
 ## Deploying your own app
 If you want to deploy your own version of this app. Maybe with different songs,
